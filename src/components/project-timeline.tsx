@@ -250,7 +250,11 @@ export function ProjectTimeline() {
               }}
               style={{ gridColumn: i + 2, gridRow: above ? 1 : 3 }}
               className={cn(
-                "group w-64 opacity-40 transition-opacity duration-500 data-active:opacity-100 sm:w-80",
+                // 70% e o piso para o texto do card passar em AA: com muted-foreground
+                // (#b5b5b5 no escuro) sobre o fundo #0a0a0a, 40% compunha #464646 e
+                // dava contraste 2,09 — menos da metade do minimo. A 70% da 5,1.
+                // O destaque do card ativo continua, so ficou menos violento.
+                "group w-64 opacity-70 transition-opacity duration-500 data-active:opacity-100 sm:w-80",
                 above ? "self-end pb-6" : "self-start pt-6",
               )}
             >

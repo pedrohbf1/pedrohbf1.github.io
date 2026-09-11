@@ -11,12 +11,20 @@ export function Reveal({
   children,
   delay = 0,
   className,
+  as: Tag = "div",
 }: {
   children: ReactNode;
   delay?: number;
   className?: string;
+  /**
+   * Dentro de <ul>/<ol> precisa ser "li": o <div> que este componente
+   * renderizava entrava ENTRE a lista e os itens, e aí o <ol> ficava com
+   * filho inválido e os <li> sem lista pai. Quebrava a lista para quem
+   * navega por leitor de tela — que conta e anuncia os itens.
+   */
+  as?: "div" | "li";
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement & HTMLLIElement>(null);
   const [visivel, setVisivel] = useState(false);
 
   useEffect(() => {
@@ -36,7 +44,7 @@ export function Reveal({
   }, []);
 
   return (
-    <div
+    <Tag
       ref={ref}
       style={{ transitionDelay: visivel ? `${delay}ms` : undefined }}
       className={cn(
@@ -48,7 +56,7 @@ export function Reveal({
       )}
     >
       {children}
-    </div>
+    </Tag>
   );
 }
 

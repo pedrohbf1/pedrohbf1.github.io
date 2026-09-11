@@ -252,18 +252,21 @@ export function About() {
           <div className="lg:col-span-9">
             <ol className="grid gap-x-12 gap-y-10 md:grid-cols-3">
               {PRINCIPIOS.map((principio, i) => (
-                <Reveal key={principio.titulo} delay={i * 90}>
-                  <li className="border-t border-foreground/10 pt-5">
-                    <span className="font-mono text-[0.625rem] tabular-nums tracking-[0.18em] text-brand">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <h3 className="mt-3 text-lg font-semibold tracking-tight">
-                      {principio.titulo}
-                    </h3>
-                    <p className="mt-2.5 text-pretty text-sm leading-relaxed text-muted-foreground">
-                      {principio.texto}
-                    </p>
-                  </li>
+                <Reveal
+                  key={principio.titulo}
+                  as="li"
+                  delay={i * 90}
+                  className="border-t border-foreground/10 pt-5"
+                >
+                  <span className="font-mono text-[0.625rem] tabular-nums tracking-[0.18em] text-brand">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="mt-3 text-lg font-semibold tracking-tight">
+                    {principio.titulo}
+                  </h3>
+                  <p className="mt-2.5 text-pretty text-sm leading-relaxed text-muted-foreground">
+                    {principio.texto}
+                  </p>
                 </Reveal>
               ))}
             </ol>
