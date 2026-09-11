@@ -150,7 +150,15 @@ const PERFIS: Perfil[] = [
     nome: "screenshot de projeto",
     casa: (r) => r.startsWith("projects/"),
     render: 318,
-    larguras: [320, 640],
+    // 480 existe por causa da densidade real de celular. O card mede 254 CSS px
+    // no mobile; num aparelho DPR 1,75 (o que o Lighthouse emula, e o mais
+    // comum em Android) isso pede 445 px de verdade. So com 320 e 640, o
+    // navegador era obrigado a pegar 640 — o Lighthouse marcou 24 kB
+    // desperdicados so na floricultura e 12 kB na sistema-de-entregas.
+    // Conferi antes de acrescentar: o avif continua vencendo em 480 nas 20
+    // imagens, entao a largura nova NAO derruba o avif de ninguem pela regra
+    // tudo-ou-nada.
+    larguras: [320, 480, 640],
     variantes: true,
   },
   {

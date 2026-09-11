@@ -86,200 +86,239 @@
     ]
   },
   "projects/bandeirantes.jpg": {
-    "h": "f422ca2cf3977c9954fb2382ea066874f0f8cf60",
+    "h": "fb5123c434153aacb2b78f4f0966c13c970ee7b4",
     "out": [
       "projects/bandeirantes.jpg",
       "projects/bandeirantes-320.webp",
+      "projects/bandeirantes-480.webp",
       "projects/bandeirantes-640.webp",
       "projects/bandeirantes-320.avif",
+      "projects/bandeirantes-480.avif",
       "projects/bandeirantes-640.avif"
     ]
   },
   "projects/contrato.jpg": {
-    "h": "fa8368477fabb939edfddb6bd406f773d5de2694",
+    "h": "f469301339204bc06757885bc1a6f1b52be55fee",
     "out": [
       "projects/contrato.jpg",
       "projects/contrato-320.webp",
+      "projects/contrato-480.webp",
       "projects/contrato-640.webp",
       "projects/contrato-320.avif",
+      "projects/contrato-480.avif",
       "projects/contrato-640.avif"
     ]
   },
   "projects/dactai.jpg": {
-    "h": "4a9498adcf828fa21dc7b6edc9828163767e13ea",
+    "h": "352c112863710beda05544e61b5d74d4179bf37c",
     "out": [
       "projects/dactai.jpg",
       "projects/dactai-320.webp",
+      "projects/dactai-480.webp",
       "projects/dactai-640.webp",
       "projects/dactai-320.avif",
+      "projects/dactai-480.avif",
       "projects/dactai-640.avif"
     ]
   },
   "projects/destrava.jpg": {
-    "h": "ab9a83cd455fb21358806385aeb9b57e515e1a69",
+    "h": "4c77962b0709db34c7e079e8c06613b28dbac9c2",
     "out": [
       "projects/destrava.jpg",
       "projects/destrava-320.webp",
+      "projects/destrava-480.webp",
       "projects/destrava-640.webp",
       "projects/destrava-320.avif",
+      "projects/destrava-480.avif",
       "projects/destrava-640.avif"
     ]
   },
   "projects/diversao-offline.jpg": {
-    "h": "406f547278465eb520a572b883257776f54e4924",
+    "h": "e2c0639edefe0e3d04e2dcf8de3352c2af7de1f9",
     "out": [
       "projects/diversao-offline.jpg",
       "projects/diversao-offline-320.webp",
+      "projects/diversao-offline-480.webp",
       "projects/diversao-offline-640.webp",
       "projects/diversao-offline-320.avif",
+      "projects/diversao-offline-480.avif",
       "projects/diversao-offline-640.avif"
     ]
   },
   "projects/doff-us.jpg": {
-    "h": "90159ccebfa8723bffa7ce30e93741cd7d5b6149",
+    "h": "82c0cdf5556c276377ce7a0ccad0f2bc3a58665f",
     "out": [
       "projects/doff-us.jpg",
       "projects/doff-us-320.webp",
+      "projects/doff-us-480.webp",
       "projects/doff-us-640.webp",
       "projects/doff-us-320.avif",
+      "projects/doff-us-480.avif",
       "projects/doff-us-640.avif"
     ]
   },
   "projects/dra-priscilla.jpg": {
-    "h": "4fbab4c5c8d3586e2b43a298737f71dc939a5041",
+    "h": "acc7bde32c34ccefa732c79b3dcce114b1e899ba",
     "out": [
       "projects/dra-priscilla.jpg",
       "projects/dra-priscilla-320.webp",
+      "projects/dra-priscilla-480.webp",
       "projects/dra-priscilla-640.webp",
       "projects/dra-priscilla-320.avif",
+      "projects/dra-priscilla-480.avif",
       "projects/dra-priscilla-640.avif"
     ]
   },
   "projects/feedback-github-ia.jpg": {
-    "h": "f2cd43fb9ff0ffe65d64efc8081db58f5397577f",
+    "h": "1b70375840d929891772c81b149bb3567474094a",
     "out": [
       "projects/feedback-github-ia.jpg",
       "projects/feedback-github-ia-320.webp",
+      "projects/feedback-github-ia-480.webp",
       "projects/feedback-github-ia-640.webp",
       "projects/feedback-github-ia-320.avif",
+      "projects/feedback-github-ia-480.avif",
       "projects/feedback-github-ia-640.avif"
     ]
   },
   "projects/floricultura-boulevard.jpg": {
-    "h": "496502ffffd928e4fa05b06d66a23f27692cf6b5",
+    "h": "d50c68f44c79acd77348cb9b10c3969ad46e8f38",
     "out": [
       "projects/floricultura-boulevard.jpg",
       "projects/floricultura-boulevard-320.webp",
+      "projects/floricultura-boulevard-480.webp",
       "projects/floricultura-boulevard-640.webp",
       "projects/floricultura-boulevard-320.avif",
+      "projects/floricultura-boulevard-480.avif",
       "projects/floricultura-boulevard-640.avif"
     ]
   },
   "projects/granello-mineracao.jpg": {
-    "h": "e9cb530385140204cf1b8c8f378ac977e6ece0fa",
+    "h": "1c1abf7568232e6f1046e4097e098fe251f4115a",
     "out": [
       "projects/granello-mineracao.jpg",
       "projects/granello-mineracao-320.webp",
+      "projects/granello-mineracao-480.webp",
       "projects/granello-mineracao-640.webp",
       "projects/granello-mineracao-320.avif",
+      "projects/granello-mineracao-480.avif",
       "projects/granello-mineracao-640.avif"
     ]
   },
   "projects/jogo-numero-secreto.jpg": {
-    "h": "b6c3b6f750fa6ea4186b1e564930d15da7ea317c",
+    "h": "b8e7f4ecae0380e3f384e533ba2d87a40632e405",
     "out": [
       "projects/jogo-numero-secreto.jpg",
       "projects/jogo-numero-secreto-320.webp",
+      "projects/jogo-numero-secreto-480.webp",
       "projects/jogo-numero-secreto-640.webp"
     ]
   },
   "projects/lead.jpg": {
-    "h": "8bcc608f7a2b9461e4f7401af5adbbac1abd4a59",
+    "h": "c5fe25e3cf1dae679020a053611235a887bf19ab",
     "out": [
       "projects/lead.jpg",
       "projects/lead-320.webp",
+      "projects/lead-480.webp",
       "projects/lead-640.webp",
       "projects/lead-320.avif",
+      "projects/lead-480.avif",
       "projects/lead-640.avif"
     ]
   },
   "projects/neobix.jpg": {
-    "h": "5ce8970cff79c9d5b2d31ed122499e44ee903c58",
+    "h": "6081580a9af5e5b5c77a68b9cb5df6d985210028",
     "out": [
       "projects/neobix.jpg",
       "projects/neobix-320.webp",
+      "projects/neobix-480.webp",
       "projects/neobix-640.webp",
       "projects/neobix-320.avif",
+      "projects/neobix-480.avif",
       "projects/neobix-640.avif"
     ]
   },
   "projects/orcamentos.jpg": {
-    "h": "51d0f09e24fc4a836a2afc407b2ce9f2d0d7dc84",
+    "h": "f0eb50c9168f8d5c2526d252adec37593791c088",
     "out": [
       "projects/orcamentos.jpg",
       "projects/orcamentos-320.webp",
+      "projects/orcamentos-480.webp",
       "projects/orcamentos-640.webp",
       "projects/orcamentos-320.avif",
+      "projects/orcamentos-480.avif",
       "projects/orcamentos-640.avif"
     ]
   },
   "projects/programacao-de-producao.jpg": {
-    "h": "f342e469489636cb89f3089827a7e70229df9a8b",
+    "h": "abc544a57db3ea5465ec241ee94ec6f5856d9f35",
     "out": [
       "projects/programacao-de-producao.jpg",
       "projects/programacao-de-producao-320.webp",
+      "projects/programacao-de-producao-480.webp",
       "projects/programacao-de-producao-640.webp",
       "projects/programacao-de-producao-320.avif",
+      "projects/programacao-de-producao-480.avif",
       "projects/programacao-de-producao-640.avif"
     ]
   },
   "projects/sistema-de-entregas.jpg": {
-    "h": "f206af022f5d7a82dc05b7e6638816033674686b",
+    "h": "34fe9a50279609f4ef20ca0f9c7da9d670aaf64f",
     "out": [
       "projects/sistema-de-entregas.jpg",
       "projects/sistema-de-entregas-320.webp",
+      "projects/sistema-de-entregas-480.webp",
       "projects/sistema-de-entregas-640.webp",
       "projects/sistema-de-entregas-320.avif",
+      "projects/sistema-de-entregas-480.avif",
       "projects/sistema-de-entregas-640.avif"
     ]
   },
   "projects/site-baia.jpg": {
-    "h": "998dafb9c2f671a8d363b641b5a226e86d7bcec8",
+    "h": "4d48d3cfcdf61a6f0ff7747f79a42eb61de68be2",
     "out": [
       "projects/site-baia.jpg",
       "projects/site-baia-320.webp",
+      "projects/site-baia-480.webp",
       "projects/site-baia-640.webp",
       "projects/site-baia-320.avif",
+      "projects/site-baia-480.avif",
       "projects/site-baia-640.avif"
     ]
   },
   "projects/site-pitangui-pedras.jpg": {
-    "h": "449d4973fec36d6cab3fac9c3e6439615ce450ce",
+    "h": "1c53cc88cb80289c279e143084b44d4b808fb43d",
     "out": [
       "projects/site-pitangui-pedras.jpg",
       "projects/site-pitangui-pedras-320.webp",
+      "projects/site-pitangui-pedras-480.webp",
       "projects/site-pitangui-pedras-640.webp",
       "projects/site-pitangui-pedras-320.avif",
+      "projects/site-pitangui-pedras-480.avif",
       "projects/site-pitangui-pedras-640.avif"
     ]
   },
   "projects/track-it.jpg": {
-    "h": "612ff4fac5280a133d98b46db8c3dee54cde5257",
+    "h": "d30454ab6b00bff5a60413bdf5c40c8417b8cece",
     "out": [
       "projects/track-it.jpg",
       "projects/track-it-320.webp",
+      "projects/track-it-480.webp",
       "projects/track-it-640.webp",
       "projects/track-it-320.avif",
+      "projects/track-it-480.avif",
       "projects/track-it-640.avif"
     ]
   },
   "projects/troca-de-cheque.jpg": {
-    "h": "31577874ae46908bdfc4ed9b6d74e9b30a16e6ad",
+    "h": "9938181e79f6953a1efce93372d21de9662bb520",
     "out": [
       "projects/troca-de-cheque.jpg",
       "projects/troca-de-cheque-320.webp",
+      "projects/troca-de-cheque-480.webp",
       "projects/troca-de-cheque-640.webp",
       "projects/troca-de-cheque-320.avif",
+      "projects/troca-de-cheque-480.avif",
       "projects/troca-de-cheque-640.avif"
     ]
   }

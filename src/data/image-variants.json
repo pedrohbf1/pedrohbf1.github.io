@@ -75,100 +75,120 @@
   "/projects/bandeirantes.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/contrato.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/dactai.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/destrava.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/diversao-offline.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/doff-us.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/dra-priscilla.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/feedback-github-ia.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/floricultura-boulevard.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/granello-mineracao.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
@@ -176,96 +196,115 @@
     "avif": [],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/lead.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/neobix.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/orcamentos.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/programacao-de-producao.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/sistema-de-entregas.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/site-baia.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/site-pitangui-pedras.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/track-it.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   },
   "/projects/troca-de-cheque.jpg": {
     "avif": [
       320,
+      480,
       640
     ],
     "webp": [
       320,
+      480,
       640
     ]
   }
