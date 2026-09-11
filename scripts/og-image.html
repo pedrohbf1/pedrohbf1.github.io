@@ -17,8 +17,23 @@
      o que ele faz hoje. -->
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8">
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  /* Fontes da PROPRIA origem, nao do Google. Antes este cartao baixava do
+     fonts.googleapis.com em tempo de build, e sem rede o Chrome nao falhava:
+     caia num fallback do sistema e gerava um PNG que passava em todas as
+     conferencias (1200x630, peso ok) so que com a tipografia errada — falha
+     silenciosa no unico arquivo que ninguem abre para revisar.
+     O seo-build.ts embute estes .woff2 em base64 no arquivo temporario, entao
+     a geracao e deterministica e funciona offline e em CI sem rede.
+     A Inter Tight e variavel (100..900), entao cobre os pesos usados aqui. */
+  @font-face{
+    font-family:"Inter Tight"; font-style:normal; font-weight:100 900;
+    src:url("../public/fonts/inter-tight-latin.woff2") format("woff2");
+  }
+  @font-face{
+    font-family:"JetBrains Mono"; font-style:normal; font-weight:100 800;
+    src:url("../public/fonts/jetbrains-mono-latin.woff2") format("woff2");
+  }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{width:1200px;height:630px;overflow:hidden}
   body{

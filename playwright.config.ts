@@ -89,8 +89,16 @@ export default defineConfig({
      * explicito aqui.
      */
     {
-      command:
-        "bun run build && bun run scripts/seo-build.ts && bunx vite preview --port 4173",
+      // `bun run build` ja termina chamando o seo-build (a Forja plugou), entao
+      // chamar de novo aqui so rodava o pre-render duas vezes.
+      //
+      // ATENCAO: este comando REESCREVE public/, src/data/image-variants.json e
+      // dist/ — o build comeca com optimize-images. Foi assim que eu mesma
+      // quebrei o freeze varias vezes: cada rodada da suite mexia no tree que a
+      // rodada estava tentando congelar. `reuseExistingServer` evita isso quando
+      // ja existe um preview de pe na 4173; se voce precisa de um tree parado de
+      // verdade, suba o preview ANTES e rode a suite depois.
+      command: "bun run build && bunx vite preview --port 4173",
       url: PREVIEW_URL,
       reuseExistingServer: true,
       timeout: 180_000,

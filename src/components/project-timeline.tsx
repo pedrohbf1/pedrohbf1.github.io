@@ -2,7 +2,6 @@ import {
   Fragment,
   useEffect,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -71,6 +70,13 @@ function CompanyBadge({ project }: { project: Project }) {
   );
 }
 
+/**
+ * Quem NÃO recebe o efeito de rolagem presa: quem pediu menos movimento, quem
+ * aponta com o dedo, e telas estreitas. Lista separada por vírgula = OU.
+ */
+const QUERY_FAIXA_NATIVA =
+  "(prefers-reduced-motion: reduce), (pointer: coarse), (max-width: 767px)";
+
 export function ProjectTimeline() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -81,19 +87,34 @@ export function ProjectTimeline() {
   const yearRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const activeRef = useRef(-1);
 
-  const reduced = useMemo(
+  // No celular a faixa rola NATIVA. O scroll-jack (ler o scroll vertical na
+  // thread principal e escrever translate horizontal) disputa com a rolagem
+  // por toque, que o navegador roda no compositor: os dois saem de sincronia
+  // e a seção engasga. Fora do desktop com mouse, portanto, nada de sequestro
+  // de rolagem — o dedo arrasta a faixa direto, que é liso porque nunca passa
+  // pelo JS. Vale também para quem pediu menos movimento.
+  //
+  // A vírgula em matchMedia é OU: qualquer uma das três liga a faixa nativa.
+  const [faixaNativa, setFaixaNativa] = useState(
     () =>
       typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    [],
+      window.matchMedia(QUERY_FAIXA_NATIVA).matches,
   );
+
+  // Rotacionar o aparelho ou redimensionar a janela troca de modo na hora.
+  useEffect(() => {
+    const mq = window.matchMedia(QUERY_FAIXA_NATIVA);
+    const aoMudar = () => setFaixaNativa(mq.matches);
+    mq.addEventListener("change", aoMudar);
+    return () => mq.removeEventListener("change", aoMudar);
+  }, []);
 
   // Quanto a trilha precisa andar na horizontal — vira também a altura extra
   // da seção, para o mapeamento rolagem→deslocamento ficar 1:1.
   const [distance, setDistance] = useState(0);
 
   useLayoutEffect(() => {
-    if (reduced) return;
+    if (faixaNativa) return;
 
     const measure = () => {
       const track = trackRef.current;
@@ -130,10 +151,10 @@ export function ProjectTimeline() {
       observer.disconnect();
       window.removeEventListener("resize", measure);
     };
-  }, [reduced]);
+  }, [faixaNativa]);
 
   useEffect(() => {
-    if (reduced) return;
+    if (faixaNativa) return;
 
     let frame = 0;
 
@@ -189,7 +210,18 @@ export function ProjectTimeline() {
       window.removeEventListener("scroll", onScroll);
       if (frame) cancelAnimationFrame(frame);
     };
-  }, [distance, reduced]);
+  }, [distance, faixaNativa]);
+
+  // Trocar de modo (rotacionar o aparelho, por exemplo) deixaria para trás o
+  // translate e o destaque que o modo preso escreveu direto no DOM — na faixa
+  // nativa isso apareceria como uma trilha deslocada e um card aceso à toa.
+  useEffect(() => {
+    if (!faixaNativa) return;
+    if (trackRef.current) trackRef.current.style.transform = "";
+    cardRefs.current[activeRef.current]?.removeAttribute("data-active");
+    nodeRefs.current[activeRef.current]?.removeAttribute("data-active");
+    activeRef.current = -1;
+  }, [faixaNativa]);
 
   /**
    * Grade de 3 faixas: card, eixo, data. A faixa do card é `1fr`, então todas
@@ -199,7 +231,14 @@ export function ProjectTimeline() {
   const track = (
     <div
       ref={trackRef}
-      className="grid grid-flow-col auto-cols-max grid-rows-[1fr_auto_1fr] gap-x-12 will-change-transform"
+      className={cn(
+        "grid grid-flow-col auto-cols-max grid-rows-[1fr_auto_1fr] will-change-transform",
+        // O vão entre colunas encolhe no carrossel por uma razão de conta: com
+        // o card centralizado, o vizinho só aparece se a metade que sobra de
+        // cada lado for maior que o vão. Com os 48px do desktop, o próximo
+        // card caía fora da tela e o carrossel parecia não ter continuação.
+        faixaNativa ? "gap-x-4 sm:gap-x-12" : "gap-x-12",
+      )}
     >
       {/* Prólogo na coluna 1: sem miniatura, sem empresa e com nó vazado — a
           diferença de peso é o que o marca como "antes", não como projeto. */}
@@ -250,18 +289,39 @@ export function ProjectTimeline() {
               }}
               style={{ gridColumn: i + 2, gridRow: above ? 1 : 3 }}
               className={cn(
-                // 70% e o piso para o texto do card passar em AA: com muted-foreground
-                // (#b5b5b5 no escuro) sobre o fundo #0a0a0a, 40% compunha #464646 e
-                // dava contraste 2,09 — menos da metade do minimo. A 70% da 5,1.
-                // O destaque do card ativo continua, so ficou menos violento.
-                "group w-64 opacity-70 transition-opacity duration-500 data-active:opacity-100 sm:w-80",
+                "group",
+                faixaNativa
+                  ? // 86vw deixa um pedaço do próximo card à mostra — é esse
+                    // corte que diz "tem mais para o lado" sem precisar de
+                    // seta nem de barra. Acima de sm volta à largura normal,
+                    // porque aí a faixa nativa é a de quem pediu menos
+                    // movimento, num desktop, e 86vw seria um card gigante.
+                    "carrossel-item w-[85vw] sm:w-80"
+                  : "w-64 sm:w-80",
+                // O esmaecimento só existe onde existe card ativo. Na faixa
+                // nativa ninguém é o ativo, então todos ficariam apagados ao
+                // mesmo tempo — apagado sem destaque nenhum é só apagado.
+                //
+                // No modo preso o piso é 75%, não os 40% de antes: a 40% o
+                // texto de conteúdo compunha #464646 sobre #0a0a0a, contraste
+                // 2,09, menos da METADE do mínimo AA. O efeito de foco não se
+                // perdeu, desceu para a imagem, no ProjectThumb abaixo.
+                !faixaNativa &&
+                  "opacity-75 transition-opacity duration-500 data-active:opacity-100",
                 above ? "self-end pb-6" : "self-start pt-6",
               )}
             >
               <ProjectThumb
                 project={project}
                 index={i}
-                className="aspect-video shadow-lg transition-shadow duration-500 group-data-active:shadow-2xl group-data-active:shadow-brand/10"
+                className={cn(
+                  "aspect-video shadow-lg",
+                  // 60% dentro de um card a 75% dá ~45% na tela: quase o mesmo
+                  // peso visual que o card inteiro tinha a 40%, sem levar o
+                  // texto junto. Na faixa nativa, tudo em cor cheia.
+                  !faixaNativa &&
+                    "opacity-60 transition-opacity duration-500 group-data-active:opacity-100",
+                )}
               />
 
               <div className="mt-3 flex items-center gap-2.5">
@@ -312,7 +372,11 @@ export function ProjectTimeline() {
                 {project.description}
               </p>
 
-              <p className="mt-2.5 font-mono text-[0.625rem] uppercase tracking-[0.14em] text-muted-foreground/70">
+              {/* Sem o /70: a transparencia do texto MULTIPLICA com a do card,
+                  entao a stack dava 4,20 no card ativo e 2,83 no inativo. Sem
+                  ela fica 7,6 e 4,7 — os dois passam em AA, e a hierarquia
+                  continua pelo tamanho e pelo tom do muted-foreground. */}
+              <p className="mt-2.5 font-mono text-[0.625rem] uppercase tracking-[0.14em] text-muted-foreground">
                 {project.stack.join(" · ")}
               </p>
             </article>
@@ -376,12 +440,17 @@ export function ProjectTimeline() {
     </div>
   );
 
-  // Sem animação de rolagem: vira uma faixa horizontal comum, arrastável.
-  if (reduced) {
+  // Sem rolagem presa: vira uma faixa horizontal comum, arrastável com o dedo.
+  if (faixaNativa) {
     return (
       <section id="projetos" className="border-t border-foreground/10 py-20">
         {header}
-        <div className="mt-12 overflow-x-auto px-6 pb-8 md:px-10">{track}</div>
+        {/* No celular isto é um carrossel: um projeto por vez, com encaixe.
+            O encaixe é CSS puro — continua sendo o compositor que rola, que é
+            justamente o que destravou a seção no toque. */}
+        <div className="carrossel mt-12 overflow-x-auto px-6 pb-8 md:px-10">
+          {track}
+        </div>
       </section>
     );
   }
@@ -408,7 +477,10 @@ export function ProjectTimeline() {
               ref={(node) => {
                 yearRefs.current[i] = node;
               }}
-              className="col-start-1 row-start-1 select-none font-black leading-none tracking-tighter text-foreground/5 transition-opacity duration-700 text-[clamp(11rem,32vw,28rem)]"
+              // `will-change: opacity` põe cada ano na própria camada: o
+              // crossfade vira composição, em vez de repintar uma área do
+              // tamanho da tela a cada troca de ano.
+              className="col-start-1 row-start-1 select-none font-black leading-none tracking-tighter text-foreground/5 transition-opacity duration-700 will-change-[opacity] text-[clamp(11rem,32vw,28rem)]"
               style={{ opacity: i === 0 ? 1 : 0 }}
             >
               {year}

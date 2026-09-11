@@ -270,11 +270,13 @@ async function gerarOgImage() {
   const stamp = path.resolve(import.meta.dirname, "../public/og.stamp.json");
   const html = await readFile(template, "utf8");
 
-  // O cartao usa MAIS DE UMA imagem (o logo da marca e o retrato). Cada
-  // src="../public/..." do template e resolvido aqui, para nenhuma ficar de
-  // fora — antes so a primeira era tratada, e a segunda saia quebrada.
-  const usadas = [...html.matchAll(/src="\.\.\/public\/([^"]+)"/g)].map((m) => m[1]);
-  const arquivos = usadas.map((rel) => ({
+  // O cartao referencia arquivos de public/ tanto em src="" (imagens) quanto
+  // em url() dentro do CSS (as fontes). Todos precisam ser resolvidos: o HTML
+  // temporario mora fora do repositorio e caminho relativo nao alcancaria.
+  const usadas = [
+    ...html.matchAll(/(?:src=|url\()\s*["']?\.\.\/public\/([^"')]+)["']?/g),
+  ].map((m) => m[1]);
+  const arquivos = [...new Set(usadas)].map((rel) => ({
     rel,
     abs: path.resolve(import.meta.dirname, "../public", rel),
   }));
@@ -304,28 +306,15 @@ async function gerarOgImage() {
     return;
   }
 
-  // As fontes do cartao (Inter Tight / JetBrains Mono) vem do Google Fonts.
-  // Sem rede o Chrome nao falha: cai num fallback do sistema e gera um PNG que
-  // PARECE certo — 1200x630, ~250 kB, passa nas duas conferencias abaixo — so
-  // que com outra tipografia. Seria falha silenciosa justamente no arquivo que
-  // ninguem abre para revisar, porque quem le a og:image e o WhatsApp.
-  // A URL sai do proprio template para nao virar um segundo lugar a manter.
-  const fontesUrl = html.match(/href="(https:\/\/fonts\.googleapis\.com[^"]+)"/)?.[1];
-  const fontesOk = fontesUrl
-    ? await fetch(fontesUrl, { signal: AbortSignal.timeout(8000) })
-        .then((r) => r.ok)
-        .catch(() => false)
-    : false;
-  if (!fontesOk) {
-    if (existsSync(destino)) {
-      console.warn("SEO: sem acesso ao Google Fonts — MANTIVE a og.png atual.");
-      console.warn("SEO: regerar agora sairia com a fonte errada. O stamp fica");
-      console.warn("SEO: desatualizado de proposito: o proximo build com rede regera.");
-      return;
-    }
-    throw new Error(
-      "og.png nao existe e nao da para gerar sem as fontes (sem acesso ao Google Fonts).",
-    );
+  // Antes aqui havia uma trava de REDE: o cartao puxava as fontes do Google e,
+  // sem acesso, o Chrome caia num fallback do sistema e gerava um PNG com a
+  // tipografia errada que passava em todas as conferencias. Agora as fontes
+  // vem do repositorio, entao a checagem virou de ARQUIVO — e ja foi feita no
+  // laco acima, que aborta se qualquer referencia de public/ nao existir.
+  // Resultado: geracao deterministica, offline e em CI sem rede.
+  const fontes = arquivos.filter((a) => a.rel.endsWith(".woff2"));
+  if (fontes.length === 0) {
+    throw new Error("og-image.html nao declara nenhuma fonte local — o cartao sairia em fonte de sistema");
   }
 
   // Cada imagem vai embutida em base64 para o arquivo temporario poder morar
@@ -336,12 +325,14 @@ async function gerarOgImage() {
       ? "image/png"
       : a.rel.endsWith(".svg")
         ? "image/svg+xml"
-        : "image/jpeg";
+        : a.rel.endsWith(".woff2")
+          ? "font/woff2"
+          : "image/jpeg";
     const b64 = Buffer.from(await Bun.file(a.abs).bytes()).toString("base64");
-    pronto = pronto.replaceAll(
-      `src="../public/${a.rel}"`,
-      `src="data:${tipo};base64,${b64}"`,
-    );
+    const dataUri = `data:${tipo};base64,${b64}`;
+    pronto = pronto
+      .replaceAll(`src="../public/${a.rel}"`, `src="${dataUri}"`)
+      .replaceAll(`url("../public/${a.rel}")`, `url("${dataUri}")`);
   }
 
   const dir = await mkdtemp(path.join(os.tmpdir(), "seo-og-"));

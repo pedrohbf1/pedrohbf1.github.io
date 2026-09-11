@@ -4,6 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- Preload da fonte que pinta o h1 e o corpo. Comeca o download no
+         primeiro byte do HTML, antes de o CSS existir — sem isto a fonte so e
+         descoberta quando o @font-face do index.css e parseado.
+
+         crossorigin E OBRIGATORIO, nao decorativo: fonte e sempre buscada em
+         modo anonimo, e um preload sem ele nao casa com a requisicao do
+         @font-face — o navegador baixaria o arquivo DUAS vezes. Pelo mesmo
+         motivo a URL e copiada literal do src do @font-face (src/styles/
+         index.css), sem query e sem hash: qualquer diferenca e outro recurso.
+
+         So a Inter Tight. A JetBrains Mono tambem aparece na primeira tela (a
+         etiqueta do hero e o menu do cabecalho), mas so pinta rotulo pequeno;
+         preload fura a fila e competiria com a foto do hero, que e o LCP.
+         Trocar a fonte de um rotulo custa menos do que atrasar o LCP. -->
+    <link
+      rel="preload"
+      href="/fonts/inter-tight-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
     <!-- Anti-flash do tema. Roda ANTES do primeiro paint, por isso e inline e
          fica aqui em cima, na frente do CSS e do bundle.
          O tema e por classe .dark no <html>, entao sem isto a pagina nasce

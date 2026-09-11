@@ -133,41 +133,56 @@ test.describe("Baseline visual", () => {
   });
 
   /**
-   * Os screenshots de projeto sao o outro lugar onde a compressao morde: sao
-   * 21 imagens servidas a ~318px que hoje chegam em 1600px. Recorto os quatro
-   * primeiros cards em 2x para ter prova de qualidade deles tambem.
+   * Os screenshots de projeto sao a outra frente da compressao: sao 21 imagens
+   * servidas a ~318px que chegam do pipeline em 640px.
+   *
+   * Miro em arquivos NOMEADOS, nao em `.nth(0..3)`. Ja tentei por posicao e deu
+   * falso positivo: a timeline muda qual card e o primeiro conforme o estado de
+   * rolagem, entao a cena comparava projetos DIFERENTES entre si e acusava
+   * "perda de qualidade" que era so outro card. Com o nome no seletor, cada
+   * cena compara sempre a mesma imagem — que e o unico jeito de isso servir
+   * como prova de qualidade.
    */
-  test("cards de projeto em alta densidade", async ({ browser }, testInfo) => {
-    test.skip(
-      !testInfo.project.name.endsWith("1440"),
-      "um recorte em 2x por motor basta",
-    );
+  const CARDS = [
+    "jogo-numero-secreto",
+    "granello-mineracao",
+    "dactai",
+    "site-pitangui-pedras",
+  ] as const;
 
-    const context = await browser.newContext({
-      viewport: { width: 1440, height: 900 },
-      deviceScaleFactor: 2,
-    });
-    const page = await context.newPage();
-    await page.goto("/#projetos");
-    await freezeForScreenshot(page);
-    await page.locator("#projetos").scrollIntoViewIfNeeded();
-    await waitForImages(page, "#projetos");
-    await page.waitForTimeout(400);
+  for (const card of CARDS) {
+    test(`card de projeto em alta densidade — ${card}`, async ({ browser }, testInfo) => {
+      test.skip(
+        !testInfo.project.name.endsWith("1440"),
+        "um recorte em 2x por motor basta",
+      );
 
-    const cards = page.locator('#projetos img[src*="/projects/"]');
-    const total = Math.min(await cards.count(), 4);
-    expect(total, "nao achei card de projeto").toBeGreaterThan(0);
+      const context = await browser.newContext({
+        viewport: { width: 1440, height: 900 },
+        deviceScaleFactor: 2,
+      });
+      const page = await context.newPage();
+      await page.goto("/#projetos");
+      await freezeForScreenshot(page);
 
-    for (let i = 0; i < total; i++) {
-      const card = cards.nth(i);
-      await card.scrollIntoViewIfNeeded();
-      await page.waitForTimeout(150);
-      await expect(card).toHaveScreenshot(
-        `card-projeto-${i}-2x-${testInfo.project.name}.png`,
+      // A cena de QUALIDADE tem que medir so a imagem. Sem isto ela mede
+      // tambem o estado de apresentacao: a timeline esmaece card nao-ativo, e
+      // quando a Aurora mudou essa regra as cenas acusaram "perda de qualidade"
+      // que era so opacidade. Forco opacidade cheia na captura para sobrar
+      // apenas a variavel que me interessa — textura, bloco, banda.
+      await page.addStyleTag({
+        content: "#projetos, #projetos * { opacity: 1 !important; filter: none !important; }",
+      });
+
+      const img = page.locator(`#projetos img[src*="${card}"]`).first();
+      await img.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(250);
+      await expect(img).toHaveScreenshot(
+        `card-${card}-2x-${testInfo.project.name}.png`,
         { maxDiffPixelRatio: 0.002, scale: "device", timeout: 30_000 },
       );
-    }
 
-    await context.close();
-  });
+      await context.close();
+    });
+  }
 });
