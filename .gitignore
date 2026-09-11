@@ -28,7 +28,9 @@ dist-ssr
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-tests/baseline
+# tests/baseline NAO entra aqui: os PNGs de referencia SAO versionados de proposito
+# (prova de antes/depois da otimizacao de imagem — exigencia da Sentinela).
+# O que e descartavel ja esta coberto por /test-results/ e /playwright-report/.
 
 # Orquestracao local dos agentes (Maestri) — nao e codigo do portfolio
 /.maestri/

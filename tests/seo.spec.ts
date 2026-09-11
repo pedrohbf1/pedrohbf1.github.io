@@ -59,21 +59,43 @@ test("1. title existe e tem entre 30 e 60 chars", () => {
   expect(title.length, `title tem ${title.length} chars: "${title}"`).toBeLessThanOrEqual(60);
 });
 
-test("2. meta description existe e nao passa de 160 chars", () => {
-  // O piso de 120 que estava aqui era RECOMENDACAO do Farol na tarefa que ele
-  // me passou, nao regra do Google. O Pedro aprovou um texto curto (99 chars) e
-  // a escolha dele vence a diretriz — entao cobro so o limite que o buscador
-  // realmente impoe: existir e nao ser truncado.
+test("2. meta description existe, diz algo util e nao e truncada", () => {
+  // Este teste ja teve piso de 120 e quase virou piso de 90. Os dois eram numero
+  // arbitrario: o 120 era recomendacao do Farol, nao regra do Google, e caiu na
+  // primeira decisao editorial do Pedro (texto aprovado com 99 chars). Trocar 120
+  // por 90 so adiaria o problema — sobraria 9 de folga e qualquer lapidada
+  // quebraria de novo.
   //
-  // Fica o registro, porque nao e defeito mas e espaco nao usado: com 99 chars
-  // o texto ocupa ~64% do que o Google mostra. O Farol deixou uma variante mais
-  // longa no mesmo tom na SPEC, se um dia quiserem.
+  // Entao o teste passou a guardar o RISCO em vez do numero (ideia do Farol):
+  //   1. <= 160, que e o unico limite real — acima disso o Google trunca.
+  //   2. tem que DIZER alguma coisa: citar o papel ou uma stack que venha do
+  //      dado. Assim "Portfolio" ou uma string vazia caem, o texto do Pedro
+  //      passa, e qualquer reescrita futura dele passa sem me obrigar a
+  //      renegociar um numero.
+  //   3. piso baixo (50) so como rede contra string truncada por acidente.
   const description = meta("name", "description");
+
   expect(description, "meta description nao existe").not.toBe("");
   expect(
     description.length,
     `description tem ${description.length} chars e seria truncada: "${description}"`,
   ).toBeLessThanOrEqual(160);
+  expect(
+    description.length,
+    `description com ${description.length} chars parece um toco: "${description}"`,
+  ).toBeGreaterThanOrEqual(50);
+
+  // O vocabulario vem do dado, nao de string solta no teste.
+  const stacks = [...new Set(PROJECTS.flatMap((p) => p.stack))];
+  const termos = [PROFILE.role, ...stacks];
+  const cita = termos.some((termo) =>
+    description.toLowerCase().includes(termo.toLowerCase()),
+  );
+
+  expect(
+    cita,
+    `a description nao cita o papel nem nenhuma stack do projeto: "${description}"`,
+  ).toBe(true);
 });
 test("3. existe exatamente 1 <h1> no HTML cru", () => {
   const count = (html.match(/<h1[\s>]/gi) ?? []).length;
@@ -206,12 +228,23 @@ test("10. robots.txt e sitemap.xml servidos de verdade (nao o fallback de SPA)",
 });
 
 test("11. 404.html existe no dist e tem conteudo", async () => {
+  // Ler o dist/ do DISCO tem uma janela de corrida: entre o `vite build`
+  // escrever o index.html e o seo-build injetar o JSON-LD, o arquivo existe
+  // pela metade. O Farol quase abriu um defeito por isso — leu o dist sem
+  // JSON-LD no meio de um build meu. Nao e bug, e milissegundos.
+  // Por isso tento de novo em vez de reprovar na primeira leitura magra.
   const { readFile } = await import("node:fs/promises");
-  const body = await readFile("dist/404.html", "utf8");
-  expect(body.length, "404.html vazio").toBeGreaterThan(200);
+
+  let body = "";
+  for (let tentativa = 0; tentativa < 5; tentativa++) {
+    body = await readFile("dist/404.html", "utf8").catch(() => "");
+    if (body.length > 200 && /<html/i.test(body)) break;
+    await new Promise((r) => setTimeout(r, 400));
+  }
+
+  expect(body.length, "404.html vazio ou pela metade").toBeGreaterThan(200);
   expect(body).toMatch(/<html/i);
 });
-
 test("12. o pre-render nao congelou o tema no <html>", () => {
   const htmlTag = html.match(/<html[^>]*>/i)?.[0] ?? "";
   // Se o build gravar class="dark" ou color-scheme, o tema trava e pisca ao abrir.
