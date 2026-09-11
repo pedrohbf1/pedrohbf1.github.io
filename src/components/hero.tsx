@@ -129,10 +129,16 @@ export function Hero() {
               fetchPriority="high"
               width={1100}
               height={1100}
-              // Render medido pela Forja: 216px em 375, 320px em 768, 448px no
-              // desktop. Antes o celular baixava o original de 1100px (54 kB)
-              // para mostrar 216.
-              sizes="(max-width: 640px) 216px, (max-width: 1024px) 320px, 448px"
+              // `sizes` aqui e a largura da FONTE, nao a da caixa. A foto e
+              // quadrada e o quadro vira 4:5 a partir de sm: o object-cover
+              // escala pela ALTURA e corta as laterais, entao uma caixa de
+              // 448x560 consome 560px de largura de imagem, nao 448. Declarar
+              // 448 fazia o navegador baixar 448 e ampliar 1,25x — era esse o
+              // borrao, visivel ja em DPR 1.
+              // Caixas medidas: 216x216 (quadrada, fator 1), 320x400 e 448x560
+              // (fator 1,25). O corte e em 639px porque o `sm:` do Tailwind ja
+              // vale em 640.
+              sizes="(max-width: 639px) 216px, (max-width: 1023px) 400px, 560px"
               className="relative aspect-square w-full rounded-3xl sm:aspect-4/5 object-cover shadow-2xl shadow-black/30 ring-1 ring-foreground/15"
             />
           </div>

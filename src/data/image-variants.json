@@ -52,9 +52,7 @@
     ]
   },
   "/logos/pitangui-pedras.jpg": {
-    "avif": [
-      60
-    ],
+    "avif": [],
     "webp": [
       40,
       60
@@ -64,12 +62,14 @@
     "avif": [
       256,
       448,
-      896
+      896,
+      1100
     ],
     "webp": [
       256,
       448,
-      896
+      896,
+      1100
     ]
   },
   "/projects/bandeirantes.jpg": {
@@ -173,9 +173,7 @@
     ]
   },
   "/projects/jogo-numero-secreto.jpg": {
-    "avif": [
-      640
-    ],
+    "avif": [],
     "webp": [
       320,
       640

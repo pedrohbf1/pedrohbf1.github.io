@@ -56,6 +56,20 @@ const xml = (s: string) =>
 /** Projetos em ordem cronologica, igual a linha do tempo da tela. */
 const TIMELINE = [...PROJECTS].sort((a, b) => a.date.localeCompare(b.date));
 
+/**
+ * Stacks que o Pedro declara na secao "Stacks" do site mas que NAO aparecem
+ * no campo `stack` de nenhum projeto — aquele campo lista a stack de cada
+ * projeto, nao a base sobre a qual ela roda. Express e Elysia rodam em Node;
+ * o projeto inteiro e TypeScript.
+ *
+ * Nao sao invencao minha: estao escritas na tela, na secao Stacks. Nao da
+ * para derivar porque essa lista mora dentro de um componente da Aurora
+ * (about.tsx), nao num arquivo de dados. Enquanto nao virar dado, a garantia
+ * e a conferencia em conferirStacksExtras(): se qualquer uma sumir da pagina,
+ * o build para.
+ */
+const STACKS_EXTRAS = ["Node.js", "TypeScript"];
+
 /** Toda stack que aparece em algum projeto, da mais usada para a menos. */
 function stacksPorUso() {
   const count = new Map<string, number>();
@@ -63,6 +77,28 @@ function stacksPorUso() {
     for (const tech of p.stack) count.set(tech, (count.get(tech) ?? 0) + 1);
   }
   return [...count.entries()].sort((a, b) => b[1] - a[1]).map(([t]) => t);
+}
+
+/** Tudo que vai para o knowsAbout do Person. */
+function stacksParaSchema() {
+  const doProjeto = stacksPorUso();
+  return [...doProjeto, ...STACKS_EXTRAS.filter((t) => !doProjeto.includes(t))];
+}
+
+/**
+ * Trava contra o knowsAbout virar lista inventada. As STACKS_EXTRAS so podem
+ * existir no schema porque estao escritas na pagina; se alguem tirar uma da
+ * secao Stacks, o JSON-LD passaria a afirmar algo que o site nao sustenta.
+ */
+function conferirStacksExtras(html: string) {
+  const sumiram = STACKS_EXTRAS.filter((t) => !html.includes(t));
+  if (sumiram.length > 0) {
+    for (const t of sumiram) {
+      console.error(`SEO: "${t}" esta no knowsAbout mas nao aparece mais na pagina`);
+    }
+    console.error("SEO: tire de STACKS_EXTRAS ou devolva a stack a secao Stacks.");
+    throw new Error(`knowsAbout afirma ${sumiram.length} stack(s) que a pagina nao mostra`);
+  }
 }
 
 /* ------------------------------ 1. JSON-LD ------------------------------ */
@@ -115,7 +151,7 @@ function montarJsonLd() {
       addressCountry: "BR",
     },
     knowsLanguage: "pt-BR",
-    knowsAbout: stacksPorUso(),
+    knowsAbout: stacksParaSchema(),
     sameAs: [PROFILE.githubUrl, CONTATO.linkedin],
   };
 
@@ -232,13 +268,34 @@ async function gerarOgImage() {
   const template = path.resolve(import.meta.dirname, "og-image.html");
   const destino = path.resolve(import.meta.dirname, "../public/og.png");
   const stamp = path.resolve(import.meta.dirname, "../public/og.stamp.json");
-  const foto = path.resolve(import.meta.dirname, "../public", PROFILE.photo.replace(/^\//, ""));
-
   const html = await readFile(template, "utf8");
+
+  // O cartao usa MAIS DE UMA imagem (o logo da marca e o retrato). Cada
+  // src="../public/..." do template e resolvido aqui, para nenhuma ficar de
+  // fora — antes so a primeira era tratada, e a segunda saia quebrada.
+  const usadas = [...html.matchAll(/src="\.\.\/public\/([^"]+)"/g)].map((m) => m[1]);
+  const arquivos = usadas.map((rel) => ({
+    rel,
+    abs: path.resolve(import.meta.dirname, "../public", rel),
+  }));
+  for (const a of arquivos) {
+    if (!existsSync(a.abs)) {
+      throw new Error(`og-image.html aponta para public/${a.rel}, que nao existe`);
+    }
+  }
+
+  // A assinatura cobre o template E cada imagem que ele usa: mexeu em
+  // qualquer um, a imagem se refaz sozinha no proximo build.
   const assinatura = JSON.stringify({
-    projetos: PROJECTS.length,
     template: Bun.hash(html).toString(16),
-    foto: Bun.hash(await Bun.file(foto).bytes()).toString(16),
+    imagens: Object.fromEntries(
+      await Promise.all(
+        arquivos.map(async (a) => [
+          a.rel,
+          Bun.hash(await Bun.file(a.abs).bytes()).toString(16),
+        ]),
+      ),
+    ),
   });
 
   const anterior = await readFile(stamp, "utf8").catch(() => "");
@@ -271,12 +328,21 @@ async function gerarOgImage() {
     );
   }
 
-  // A foto vai embutida em base64 para o arquivo temporario poder morar fora
-  // do repositorio sem quebrar o caminho relativo da imagem.
-  const b64 = Buffer.from(await Bun.file(foto).bytes()).toString("base64");
-  const pronto = html
-    .replace(/\{\{PROJECT_COUNT\}\}/g, String(PROJECTS.length))
-    .replace(/src="\.\.\/public\/[^"]+"/, `src="data:image/jpeg;base64,${b64}"`);
+  // Cada imagem vai embutida em base64 para o arquivo temporario poder morar
+  // fora do repositorio sem quebrar os caminhos relativos do template.
+  let pronto = html;
+  for (const a of arquivos) {
+    const tipo = a.rel.endsWith(".png")
+      ? "image/png"
+      : a.rel.endsWith(".svg")
+        ? "image/svg+xml"
+        : "image/jpeg";
+    const b64 = Buffer.from(await Bun.file(a.abs).bytes()).toString("base64");
+    pronto = pronto.replaceAll(
+      `src="../public/${a.rel}"`,
+      `src="data:${tipo};base64,${b64}"`,
+    );
+  }
 
   const dir = await mkdtemp(path.join(os.tmpdir(), "seo-og-"));
   const arquivo = path.join(dir, "og.html");
@@ -316,7 +382,7 @@ async function gerarOgImage() {
       throw new Error(`og.png com ${Math.round(bytes.length / 1024)} kB, acima dos 300 kB que o WhatsApp aceita`);
     }
     await writeFile(stamp, assinatura, "utf8");
-    console.log(`SEO: og.png regerada (${PROJECTS.length} projetos, ${Math.round(bytes.length / 1024)} kB)`);
+    console.log(`SEO: og.png regerada (${w}x${h}, ${Math.round(bytes.length / 1024)} kB)`);
   } finally {
     await rm(dir, { recursive: true, force: true }).catch(() => {});
   }
@@ -433,6 +499,7 @@ if (!entrada.includes("<!--seo:jsonld-->")) {
 }
 
 let html = await prerender();
+conferirStacksExtras(html);
 
 const jsonld = `<script type="application/ld+json">${JSON.stringify(
   montarJsonLd(),

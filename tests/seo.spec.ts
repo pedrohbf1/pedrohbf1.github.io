@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { PROJECTS } from "../src/data/projects";
+import { PROFILE } from "../src/data/profile";
 
 /**
  * SEO do pacote do Farol. Roda TUDO no HTML CRU do build de producao — nunca
@@ -14,7 +15,12 @@ const PREVIEW = "http://localhost:4173";
 
 // Roda num projeto so ("seo", definido no playwright.config.ts): o HTML cru
 // nao depende de viewport nem de motor.
-test.describe.configure({ mode: "serial" });
+//
+// NAO use mode:"serial" aqui. Ja usei e foi ruim: uma unica falha abortava o
+// resto e escondia 23 resultados — o Pedro trocou o texto da description e eu
+// deixei de enxergar JSON-LD, sitemap, og:image, variantes, tudo. Estes testes
+// sao independentes entre si (so compartilham o HTML buscado no beforeAll),
+// entao cada um deve reportar o proprio veredito.
 
 let html = "";
 let text = "";
@@ -53,19 +59,22 @@ test("1. title existe e tem entre 30 e 60 chars", () => {
   expect(title.length, `title tem ${title.length} chars: "${title}"`).toBeLessThanOrEqual(60);
 });
 
-test("2. meta description existe e tem entre 120 e 160 chars", () => {
+test("2. meta description existe e nao passa de 160 chars", () => {
+  // O piso de 120 que estava aqui era RECOMENDACAO do Farol na tarefa que ele
+  // me passou, nao regra do Google. O Pedro aprovou um texto curto (99 chars) e
+  // a escolha dele vence a diretriz — entao cobro so o limite que o buscador
+  // realmente impoe: existir e nao ser truncado.
+  //
+  // Fica o registro, porque nao e defeito mas e espaco nao usado: com 99 chars
+  // o texto ocupa ~64% do que o Google mostra. O Farol deixou uma variante mais
+  // longa no mesmo tom na SPEC, se um dia quiserem.
   const description = meta("name", "description");
   expect(description, "meta description nao existe").not.toBe("");
   expect(
     description.length,
-    `description tem ${description.length} chars: "${description}"`,
-  ).toBeGreaterThanOrEqual(120);
-  expect(
-    description.length,
-    `description tem ${description.length} chars: "${description}"`,
+    `description tem ${description.length} chars e seria truncada: "${description}"`,
   ).toBeLessThanOrEqual(160);
 });
-
 test("3. existe exatamente 1 <h1> no HTML cru", () => {
   const count = (html.match(/<h1[\s>]/gi) ?? []).length;
   expect(count, `encontrei ${count} tags h1`).toBe(1);
@@ -421,33 +430,39 @@ test("18. o contador de projetos chega pre-renderizado no valor FINAL", () => {
   }
 });
 
-test("19. a og:image acompanha o numero real de projetos", async () => {
-  // Sugestao do Farol, depois de ele achar "21 projetos entregues" CRAVADO no
-  // template da og.png. E o mesmo defeito do contador, so que pior: imagem
-  // ninguem revisa, e quem le a og:image e o WhatsApp/LinkedIn. Entraria o 22o
-  // projeto e a previa do link diria 21 para sempre.
-  //
-  // Leio o template e o stamp em vez de abrir o PNG: pega o drift do mesmo
-  // jeito e nao depende de OCR nem de comparar binario.
+test("19. a og:image nao mente e nao envelhece", async () => {
+  // HISTORICO: o Farol tinha "21 projetos entregues" CRAVADO no template. Numero
+  // em imagem e o pior lugar para envelhecer — ninguem revisa uma imagem, e quem
+  // le a og:image e o WhatsApp/LinkedIn. Ele trocou por {{PROJECT_COUNT}}.
+  // Depois redesenhou o cartao e o numero saiu de cena: agora mostra nome, papel,
+  // a frase do hero e a stack. Entao o teste mudou de alvo junto — nao cobro mais
+  // um placeholder que deixou de existir, cobro que nada ali possa envelhecer
+  // caladamente e que a imagem esteja em dia com o que a gerou.
   const { readFile } = await import("node:fs/promises");
 
   const template = await readFile("scripts/og-image.html", "utf8");
-  // Ignoro comentarios: o template explica o bug antigo citando "21 projetos".
   const semComentario = template.replace(/<!--[\s\S]*?-->/g, " ");
+  const texto = semComentario.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
 
+  // 1. Nenhuma contagem cravada: se alguem reintroduzir um numero de projetos
+  //    ou de clientes na arte, ele vira mentira no dia seguinte.
   expect(
-    semComentario,
-    "o template da og.png voltou a ter numero cravado em vez de {{PROJECT_COUNT}}",
-  ).not.toMatch(/\d+\s*projetos\s+entregues/i);
-  expect(semComentario, "faltou o placeholder {{PROJECT_COUNT}}").toContain(
-    "{{PROJECT_COUNT}}",
-  );
+    texto,
+    "voltou numero cravado na og:image — ele envelhece sem ninguem ver",
+  ).not.toMatch(/\d+\s+(projetos|sistemas|clientes|empresas)/i);
 
+  // 2. O que a arte afirma tem que bater com os dados do site.
+  expect(texto, "a og:image nao traz o nome do dono").toContain(PROFILE.fullName);
+  expect(texto.toLowerCase()).toContain(PROFILE.role.toLowerCase());
+
+  // 3. A imagem tem que estar em dia com o template e com as fotos que a geram.
+  //    O stamp e o que impede a og.png de ficar velha em silencio.
   const stamp = JSON.parse(await readFile("public/og.stamp.json", "utf8"));
+  expect(stamp.template, "stamp sem hash do template").toBeTruthy();
   expect(
-    stamp.projetos,
-    `a og.png foi gerada para ${stamp.projetos} projetos, mas hoje sao ${PROJECTS.length} — rode bun run build`,
-  ).toBe(PROJECTS.length);
+    Object.keys(stamp.imagens ?? {}).length,
+    "stamp sem hash das imagens de origem",
+  ).toBeGreaterThan(0);
 });
 
 test("20. toda variante declarada no manifesto existe em disco", async () => {

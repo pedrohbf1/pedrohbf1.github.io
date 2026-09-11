@@ -143,6 +143,25 @@
   }
 }
 
+/* ── Imagem responsiva ────────────────────────────────────── */
+
+/* O <picture> do componente Picture usa `display: contents` para sair da
+   árvore de layout — sem isso ele entra como caixa inline dentro de figures
+   com aspect-ratio e de linhas flex. Só que `contents` promove os FILHOS a
+   itens do container, e aí cada <source>, mesmo com largura 0, vira item de
+   flex de verdade: o gap passa a contar para ele e sobra uma folga fantasma
+   de exatamente 1 gap por <source>. Apareceu em 14 lugares — o logo do
+   cabeçalho saía 10px fora do eixo do menu, no rodapé.
+   O `display: block` do <source> vem do user-agent, não do Preflight do
+   Tailwind (não existe regra de autor casando <source> neste projeto), então
+   isso vale para qualquer página que use `contents` em <picture>.
+   Esconder é seguro: <source> nunca é pintado, só informa o <img>. E não
+   afeta a escolha da variante — quem decide é o algoritmo de seleção de
+   recurso do HTML, por type/media/srcset, que não passa por CSS. */
+picture > source {
+  display: none;
+}
+
 /* ── Banner ───────────────────────────────────────────────── */
 
 /* Reveal editorial: a linha sobe de dentro de um contêiner com overflow oculto */

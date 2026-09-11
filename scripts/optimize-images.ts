@@ -137,6 +137,12 @@ type Perfil = {
   fallbackLargura?: number;
   /** Gera avif/webp. false = so recomprime o fallback. */
   variantes: boolean;
+  /**
+   * Sobrescreve a qualidade. Rosto humano precisa de mais que captura de tela:
+   * artefato em pele e cabelo salta aos olhos, artefato em UI quase nao.
+   */
+  qWebp?: number;
+  qAvif?: number;
 };
 
 const PERFIS: Perfil[] = [
@@ -159,9 +165,26 @@ const PERFIS: Perfil[] = [
     nome: "foto do Pedro (LCP)",
     casa: (r) => r === "pedro.jpg",
     render: 448,
-    larguras: [256, 448, 896],
+    // 1100 (a largura da propria fonte) E OBRIGATORIA AQUI. A foto e QUADRADA
+    // mas o hero a exibe num quadro 4:5 com object-cover: com fonte quadrada, o
+    // navegador precisa cobrir a MAIOR dimensao da caixa, a altura. Em 1440 a
+    // caixa e 448x560, entao o necessario e 560px (1x) e 1120px (2x) — nao 448
+    // e 896. Parando em 896 o navegador AMPLIAVA 25% e o rosto saia borrado no
+    // elemento de LCP. Foi o bug que o Pedro viu.
+    // A fonte tem 1100px, entao 1100 e o teto fisico: cobre 98,2% dos 1120
+    // ideais, diferenca invisivel. Melhor que isso so com foto de origem maior.
+    larguras: [256, 448, 896, 1100],
     fallbackLargura: 1100,
     variantes: true,
+    // Medi PSNR contra o original redimensionado, em vez de chutar:
+    //   896px  webp q80 = 41,66 dB (23,4 kB) | q85 = 42,81 dB (30,6 kB)
+    //          avif q55 = 42,13 dB (19,2 kB) | q65 = 43,65 dB (26,4 kB)
+    // q80 ja estava OTIMO (>40 dB e praticamente sem artefato visivel) — ou
+    // seja, os 24 kB NAO eram a causa do borrao. Subo mesmo assim porque esta e
+    // a imagem de LCP, e um rosto, e a cena foto-pedro-2x da Sentinela tem
+    // tolerancia de 0,2%: o custo sao poucos kB e a margem evita falso alarme.
+    qWebp: 85,
+    qAvif: 65,
   },
   {
     nome: "logo devPedro",
@@ -277,7 +300,10 @@ async function main() {
           l: perfil.larguras,
           f: perfil.fallbackLargura ?? null,
           v: perfil.variantes,
+          qw: perfil.qWebp ?? null,
+          qa: perfil.qAvif ?? null,
           Q,
+          Q_AVIF,
         }),
       )
       .digest("hex");
@@ -325,31 +351,54 @@ async function main() {
 
     // 2) Variantes modernas por largura.
     if (perfil.variantes) {
-      for (const w of perfil.larguras) {
-        if (larguraOriginal && w > larguraOriginal) continue;
-        const semExt = rel.slice(0, -ext.length);
-        const redim = () =>
-          sharp(bruto).resize({ width: w, withoutEnlargement: true });
-        const webp = await redim().webp({ quality: Q, effort: 6 }).toBuffer();
+      const semExt = rel.slice(0, -ext.length);
+      const larguras = perfil.larguras.filter(
+        (w) => !larguraOriginal || w <= larguraOriginal,
+      );
+
+      // Primeiro TODAS as webp, que sao a cobertura garantida.
+      const webps = new Map<number, Buffer>();
+      for (const w of larguras) {
+        const webp = await sharp(bruto)
+          .resize({ width: w, withoutEnlargement: true })
+          .webp({ quality: perfil.qWebp ?? Q, effort: 6 })
+          .toBuffer();
         await writeFile(path.join(DESTINO, `${semExt}-${w}.webp`), webp);
         escritas.push(`${semExt}-${w}.webp`);
         saidaDesteArquivo += webp.length;
+        webps.set(w, webp);
+      }
 
-        // TRAVA: variante so entra se for MENOR que a alternativa que ela
-        // deveria substituir. Formato "moderno" que pesa mais e regressao —
-        // e o <picture> serviria justamente ela para o celular novo.
-        const avif = await redim()
-          .avif({ quality: Q_AVIF, effort: 6 })
+      // AVIF e TUDO OU NADA POR IMAGEM — nao por largura.
+      // Achado da Aurora, e ela esta certa: o navegador escolhe a <source>
+      // pelo FORMATO primeiro e so depois a largura DENTRO dela. Com avif so
+      // em 640, um celular de 254px baixa o avif de 640 em vez do webp de 320
+      // — ela mediu 3,7 kB no lugar de 1,3 kB, quase o triplo. Ou seja,
+      // cobertura parcial de avif e PIOR que nenhuma. Entao: ou o avif vence
+      // em TODAS as larguras da imagem, ou nao sai nenhum.
+      const avifs = new Map<number, Buffer>();
+      let avifVenceEmTodas = true;
+      for (const w of larguras) {
+        const avif = await sharp(bruto)
+          .resize({ width: w, withoutEnlargement: true })
+          .avif({ quality: perfil.qAvif ?? Q_AVIF, effort: 6 })
           .toBuffer();
-        if (avif.length < webp.length) {
+        avifs.set(w, avif);
+        if (avif.length >= (webps.get(w)?.length ?? 0)) {
+          avifVenceEmTodas = false;
+          descartadas.push(
+            `${rel}: avif perde em ${w}px (${kb(avif.length)} >= webp ${kb(webps.get(w)?.length ?? 0)})`,
+          );
+        }
+      }
+      if (avifVenceEmTodas) {
+        for (const [w, avif] of avifs) {
           await writeFile(path.join(DESTINO, `${semExt}-${w}.avif`), avif);
           escritas.push(`${semExt}-${w}.avif`);
           saidaDesteArquivo += avif.length;
-        } else {
-          descartadas.push(
-            `${semExt}-${w}.avif (${kb(avif.length)} >= webp ${kb(webp.length)})`,
-          );
         }
+      } else {
+        descartadas.push(`${rel}: AVIF desligado inteiro (regra tudo-ou-nada)`);
       }
     }
 
@@ -360,22 +409,29 @@ async function main() {
     );
   }
 
-  // LIMPEZA. Sem isto, variante de um perfil ANTIGO fica para tras na saida e
-  // pode ser copiada para public/ e consumida por engano. Foi exatamente o que
-  // aconteceu com pedro-88/-132, gerados quando a foto era um avatar de 44px
-  // no Hero v3 — hero que nao existe mais.
+  // LIMPEZA — compara com o que foi REALMENTE escrito, nunca com a config.
+  //
+  // Dois motivos, os dois ja aconteceram de verdade:
+  // 1. Variante de perfil ANTIGO fica para tras (pedro-88/-132, de quando a
+  //    foto era avatar de 44px no Hero v3) e pode ser consumida por engano.
+  // 2. PIOR e mais sutil: um .avif DESCARTADO pela regra tudo-ou-nada continua
+  //    no disco desde a rodada anterior. Como o mapa e montado lendo o DISCO,
+  //    ele volta a declarar aquele avif — e a cobertura parcial ressurge
+  //    sozinha, que e exatamente o que a regra existe para impedir. Comparar
+  //    com saidasDe() nao pegava isso, porque a largura descartada continua
+  //    sendo uma largura valida na configuracao.
   for (const rel of arquivos) {
     const perfil = PERFIS.find((p) => p.casa(rel));
     if (!perfil) continue;
     const dir = path.dirname(path.join(DESTINO, rel));
     if (!existsSync(dir)) continue;
     const nomeBase = path.basename(rel, path.extname(rel));
-    const esperados = new Set(
-      saidasDe(rel, perfil).map((x) => path.basename(x)),
+    const escritas = new Set(
+      (novoManifesto[rel]?.out ?? []).map((x) => path.basename(x)),
     );
     for (const nome of await readdir(dir)) {
       const m = nome.match(/^(.+)-(\d+)\.(avif|webp)$/);
-      if (!m || m[1] !== nomeBase || esperados.has(nome)) continue;
+      if (!m || m[1] !== nomeBase || escritas.has(nome)) continue;
       await rm(path.join(dir, nome));
       limpas.push(nome);
     }

@@ -17,6 +17,13 @@ import { freezeForScreenshot, HERO, waitForImages } from "./helpers";
 
 /** Cada cena e um pedaco da pagina que vale comparar sozinho. */
 const CENAS = [
+  /**
+   * O header e cena PROPRIA desde que a Aurora o tirou de dentro do <section>
+   * do hero: naquele dia ele saiu de todas as cenas de uma vez e ninguem ficou
+   * vermelho. Foi assim que a folga fantasma do <Picture> passou batida no logo
+   * do cabecalho — quem acusou foi o rodape, por sorte.
+   */
+  { nome: "header", seletor: "header" },
   { nome: "hero", seletor: HERO },
   { nome: "projetos", seletor: "#projetos" },
   { nome: "sobre", seletor: "#sobre" },
@@ -84,6 +91,15 @@ test.describe("Baseline visual", () => {
 
   /**
    * A foto do Pedro em densidade 2x, recortada sozinha.
+   *
+   * ARMADILHA, para quem for julgar nitidez daqui: NUNCA use `naturalWidth`
+   * para isso. Ele vem CORRIGIDO pela densidade do srcset — um arquivo de
+   * 1100px escolhido como 2x reporta 560, e a conta da a impressao de que a
+   * imagem esta sendo ampliada 50% quando esta perfeita. Eu e a Forja caimos
+   * nessa no mesmo dia. Para julgar nitidez, compare a largura REAL do arquivo
+   * (a do nome, ou a do manifesto) com os pixels de dispositivo da caixa.
+   * E lembre que fonte QUADRADA em caixa 4:5 com object-cover cobre pela
+   * ALTURA: a caixa de 448x560 consome 560px de imagem, nao 448.
    *
    * E o LCP do hero (render ~448px em 1440) e o lugar onde perda de textura
    * aparece primeiro — pele, cabelo e o degrade do fundo preto sao justamente
