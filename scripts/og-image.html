@@ -1,0 +1,72 @@
+<!-- Fonte do public/og.png (1200x630).
+
+     NAO edite o og.png a mao: quem gera e o scripts/seo-build.ts, no build.
+     Ele troca {{PROJECT_COUNT}} pelo PROJECTS.length real e so re-renderiza
+     quando algo muda (guarda uma assinatura em public/og.stamp.json).
+     Foi de proposito: um numero cravado aqui envelhece calado — a imagem
+     continuaria dizendo "21 projetos" depois do 22o entrar no projects.ts,
+     e ninguem ve isso, porque quem le a og:image e o WhatsApp, nao nos.
+
+     As stacks do rodape sao ESCOLHIDAS A MAO, nao derivadas do projects.ts.
+     E proposital: a lista por frequencia traria "Styled Components" na frente
+     de "TypeScript", o que descreve o passado dele, nao o que ele vende hoje.
+     Mexeu aqui? O proximo build regera a imagem sozinho. -->
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px;overflow:hidden}
+  body{
+    background:oklch(0.145 0 0); color:oklch(0.985 0 0);
+    font-family:"Inter Tight",system-ui,sans-serif; position:relative;
+  }
+  /* Aurora: as mesmas 3 manchas do hero, paradas. */
+  .blob{position:absolute;border-radius:50%;filter:blur(90px)}
+  .a{width:620px;height:620px;left:-160px;top:-220px;
+     background:radial-gradient(circle, oklch(0.87 0.24 128 / .30) 0%, transparent 68%)}
+  .b{width:560px;height:560px;right:-120px;top:-180px;
+     background:radial-gradient(circle, oklch(0.62 0.20 190 / .28) 0%, transparent 70%)}
+  .c{width:700px;height:700px;left:34%;bottom:-420px;
+     background:radial-gradient(circle, oklch(0.87 0.24 128 / .18) 0%, transparent 70%)}
+  /* Grade de 64px, igual ao hero, mascarada nas bordas. */
+  .grid{position:absolute;inset:0;
+    background-image:linear-gradient(to right, oklch(0.985 0 0 / .05) 1px, transparent 1px),
+                     linear-gradient(to bottom, oklch(0.985 0 0 / .05) 1px, transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(ellipse 90% 80% at 50% 40%, #000 30%, transparent 100%)}
+  .wrap{position:relative;height:100%;display:flex;flex-direction:column;padding:96px 72px 0}
+  .top{display:flex;align-items:flex-start;justify-content:space-between;flex:1}
+  h1{font-size:124px;line-height:.86;letter-spacing:-.045em;text-transform:uppercase;
+     font-weight:800;margin-top:0}
+  h1 .g{background:linear-gradient(100deg, oklch(0.87 0.24 128) 0%, oklch(0.93 0.12 128) 55%, oklch(0.87 0.24 128) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .role{margin-top:30px;font-size:33px;font-weight:500;letter-spacing:-.02em;color:oklch(0.985 0 0)}
+  .role b{color:oklch(0.87 0.24 128);font-weight:700}
+  .sub{margin-top:14px;font-size:25px;color:oklch(0.708 0 0);letter-spacing:-.01em}
+  .photo{width:288px;height:360px;border-radius:26px;object-fit:cover;flex-shrink:0;margin-left:56px;
+    box-shadow:0 30px 70px oklch(0 0 0 / .55);outline:1px solid oklch(0.985 0 0 / .16)}
+  .ticker{justify-content:space-between;border-top:1px solid oklch(0.985 0 0 / .12);padding:22px 0 26px;display:flex;
+    align-items:center;gap:26px;font-family:"JetBrains Mono",monospace;font-size:17px;
+    letter-spacing:.2em;text-transform:uppercase;color:oklch(0.708 0 0);white-space:nowrap}
+  .ticker i{width:5px;height:5px;border-radius:50%;background:oklch(0.87 0.24 128 / .6);flex-shrink:0}
+</style></head>
+<body>
+  <div class="blob a"></div><div class="blob b"></div><div class="blob c"></div>
+  <div class="grid"></div>
+  <div class="wrap">
+    <div class="top">
+      <div>
+                <h1>Pedro<br><span class="g">Henrique</span></h1>
+        <p class="role">Desenvolvedor <b>Full Stack</b></p>
+        <p class="sub">{{PROJECT_COUNT}} projetos entregues · banco, API, tela e deploy</p>
+      </div>
+      <img class="photo" src="../public/pedro.jpg" alt="">
+    </div>
+    <div class="ticker">
+      <span>React</span><i></i><span>TypeScript</span><i></i><span>Node</span><i></i>
+      <span>Elysia</span><i></i><span>Prisma</span><i></i><span>PostgreSQL</span><i></i>
+      <span>Tailwind</span>
+    </div>
+  </div>
+</body></html>

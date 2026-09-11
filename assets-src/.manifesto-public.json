@@ -1,0 +1,286 @@
+{
+  "favicon.png": {
+    "h": "ac3ccdbc27383f82b1ff8a15f0f5d1896841223b",
+    "out": [
+      "favicon.png"
+    ]
+  },
+  "logo.png": {
+    "h": "aee42545211b9647c17b9b3e1337343e7de3b8d1",
+    "out": [
+      "logo.png",
+      "logo-56.webp",
+      "logo-84.webp"
+    ]
+  },
+  "logos/baia.png": {
+    "h": "19516b97e7bb20e28bee59ee9c79c1e60aca73ba",
+    "out": [
+      "logos/baia.png",
+      "logos/baia-40.webp",
+      "logos/baia-60.webp"
+    ]
+  },
+  "logos/bandeirantes.png": {
+    "h": "83faa4ca91d647538a96cb0700ec1f03ee75b9d1",
+    "out": [
+      "logos/bandeirantes.png",
+      "logos/bandeirantes-40.webp",
+      "logos/bandeirantes-60.webp"
+    ]
+  },
+  "logos/destrava.png": {
+    "h": "283257972c455c1f9c262bdf01ec071252a8b830",
+    "out": [
+      "logos/destrava.png",
+      "logos/destrava-40.webp",
+      "logos/destrava-60.webp"
+    ]
+  },
+  "logos/dra-priscilla.png": {
+    "h": "c4dd0a85670d5c8a20bf4472b3c75415a393021e",
+    "out": [
+      "logos/dra-priscilla.png",
+      "logos/dra-priscilla-40.webp",
+      "logos/dra-priscilla-40.avif",
+      "logos/dra-priscilla-60.webp",
+      "logos/dra-priscilla-60.avif"
+    ]
+  },
+  "logos/floricultura-boulevard.jpg": {
+    "h": "87b38bf9475118cd80b4e06a46957c847227667e",
+    "out": [
+      "logos/floricultura-boulevard.jpg",
+      "logos/floricultura-boulevard-40.webp",
+      "logos/floricultura-boulevard-60.webp"
+    ]
+  },
+  "logos/granello.png": {
+    "h": "9421a3e78d7e2548ee64c5cdcb389fe4f7c5a22a",
+    "out": [
+      "logos/granello.png",
+      "logos/granello-40.webp",
+      "logos/granello-60.webp"
+    ]
+  },
+  "logos/pitangui-pedras.jpg": {
+    "h": "9b63cfdeb222f1137d9a2f85b8472a5aa932d8f0",
+    "out": [
+      "logos/pitangui-pedras.jpg",
+      "logos/pitangui-pedras-40.webp",
+      "logos/pitangui-pedras-60.webp",
+      "logos/pitangui-pedras-60.avif"
+    ]
+  },
+  "pedro.jpg": {
+    "h": "8ac317fc03bf7ac6f84138154b09508bdd4eee56",
+    "out": [
+      "pedro.jpg",
+      "pedro-256.webp",
+      "pedro-256.avif",
+      "pedro-448.webp",
+      "pedro-448.avif",
+      "pedro-896.webp",
+      "pedro-896.avif"
+    ]
+  },
+  "projects/bandeirantes.jpg": {
+    "h": "db8b04efa9b16d6267937ae07f9b804e74d8f1f2",
+    "out": [
+      "projects/bandeirantes.jpg",
+      "projects/bandeirantes-320.webp",
+      "projects/bandeirantes-320.avif",
+      "projects/bandeirantes-640.webp",
+      "projects/bandeirantes-640.avif"
+    ]
+  },
+  "projects/contrato.jpg": {
+    "h": "6ee09e59e1e3085285322fc95d88e2e6a77ed1bb",
+    "out": [
+      "projects/contrato.jpg",
+      "projects/contrato-320.webp",
+      "projects/contrato-320.avif",
+      "projects/contrato-640.webp",
+      "projects/contrato-640.avif"
+    ]
+  },
+  "projects/dactai.jpg": {
+    "h": "dcb20d6e12a58ba61900de63e7af8728c0dd9419",
+    "out": [
+      "projects/dactai.jpg",
+      "projects/dactai-320.webp",
+      "projects/dactai-320.avif",
+      "projects/dactai-640.webp",
+      "projects/dactai-640.avif"
+    ]
+  },
+  "projects/destrava.jpg": {
+    "h": "cfdcd0f1a58687611d2ea3e0b868cf86fd0b9f48",
+    "out": [
+      "projects/destrava.jpg",
+      "projects/destrava-320.webp",
+      "projects/destrava-320.avif",
+      "projects/destrava-640.webp",
+      "projects/destrava-640.avif"
+    ]
+  },
+  "projects/diversao-offline.jpg": {
+    "h": "64702f99a5a765c6e65107a73cc4078b821643b7",
+    "out": [
+      "projects/diversao-offline.jpg",
+      "projects/diversao-offline-320.webp",
+      "projects/diversao-offline-320.avif",
+      "projects/diversao-offline-640.webp",
+      "projects/diversao-offline-640.avif"
+    ]
+  },
+  "projects/doff-us.jpg": {
+    "h": "e21b2f19972a3c8ed362b0e70c0fc751aac69791",
+    "out": [
+      "projects/doff-us.jpg",
+      "projects/doff-us-320.webp",
+      "projects/doff-us-320.avif",
+      "projects/doff-us-640.webp",
+      "projects/doff-us-640.avif"
+    ]
+  },
+  "projects/dra-priscilla.jpg": {
+    "h": "5c75cb06325723e92061f34485db7eea78f99c33",
+    "out": [
+      "projects/dra-priscilla.jpg",
+      "projects/dra-priscilla-320.webp",
+      "projects/dra-priscilla-320.avif",
+      "projects/dra-priscilla-640.webp",
+      "projects/dra-priscilla-640.avif"
+    ]
+  },
+  "projects/feedback-github-ia.jpg": {
+    "h": "7574dda85b311dba93e9bffb7475f6632894b732",
+    "out": [
+      "projects/feedback-github-ia.jpg",
+      "projects/feedback-github-ia-320.webp",
+      "projects/feedback-github-ia-320.avif",
+      "projects/feedback-github-ia-640.webp",
+      "projects/feedback-github-ia-640.avif"
+    ]
+  },
+  "projects/floricultura-boulevard.jpg": {
+    "h": "d36c139549bfdb3f368532fa29eb17238c8f69c4",
+    "out": [
+      "projects/floricultura-boulevard.jpg",
+      "projects/floricultura-boulevard-320.webp",
+      "projects/floricultura-boulevard-320.avif",
+      "projects/floricultura-boulevard-640.webp",
+      "projects/floricultura-boulevard-640.avif"
+    ]
+  },
+  "projects/granello-mineracao.jpg": {
+    "h": "adf46f06445e7629c736a2ddfcd962d139ee2ea8",
+    "out": [
+      "projects/granello-mineracao.jpg",
+      "projects/granello-mineracao-320.webp",
+      "projects/granello-mineracao-320.avif",
+      "projects/granello-mineracao-640.webp",
+      "projects/granello-mineracao-640.avif"
+    ]
+  },
+  "projects/jogo-numero-secreto.jpg": {
+    "h": "0ffbec928351dae1455b1ba24af4018acb1d65a0",
+    "out": [
+      "projects/jogo-numero-secreto.jpg",
+      "projects/jogo-numero-secreto-320.webp",
+      "projects/jogo-numero-secreto-640.webp",
+      "projects/jogo-numero-secreto-640.avif"
+    ]
+  },
+  "projects/lead.jpg": {
+    "h": "75ced531a7bab4c75bafd3456acb8570482d35b5",
+    "out": [
+      "projects/lead.jpg",
+      "projects/lead-320.webp",
+      "projects/lead-320.avif",
+      "projects/lead-640.webp",
+      "projects/lead-640.avif"
+    ]
+  },
+  "projects/neobix.jpg": {
+    "h": "413d0778640e1edea2253a9236d70767780f44b4",
+    "out": [
+      "projects/neobix.jpg",
+      "projects/neobix-320.webp",
+      "projects/neobix-320.avif",
+      "projects/neobix-640.webp",
+      "projects/neobix-640.avif"
+    ]
+  },
+  "projects/orcamentos.jpg": {
+    "h": "8a66d6c755c065ff31833362dc88f01c9c765d01",
+    "out": [
+      "projects/orcamentos.jpg",
+      "projects/orcamentos-320.webp",
+      "projects/orcamentos-320.avif",
+      "projects/orcamentos-640.webp",
+      "projects/orcamentos-640.avif"
+    ]
+  },
+  "projects/programacao-de-producao.jpg": {
+    "h": "bb561cdd830eb1e468c7453fe5bb8078c2e3b587",
+    "out": [
+      "projects/programacao-de-producao.jpg",
+      "projects/programacao-de-producao-320.webp",
+      "projects/programacao-de-producao-320.avif",
+      "projects/programacao-de-producao-640.webp",
+      "projects/programacao-de-producao-640.avif"
+    ]
+  },
+  "projects/sistema-de-entregas.jpg": {
+    "h": "e73d1123cdb9a1d69c72155a2ec82762f5061504",
+    "out": [
+      "projects/sistema-de-entregas.jpg",
+      "projects/sistema-de-entregas-320.webp",
+      "projects/sistema-de-entregas-320.avif",
+      "projects/sistema-de-entregas-640.webp",
+      "projects/sistema-de-entregas-640.avif"
+    ]
+  },
+  "projects/site-baia.jpg": {
+    "h": "5f227d31ebf362514d741f83a9afbbf2c9455b6f",
+    "out": [
+      "projects/site-baia.jpg",
+      "projects/site-baia-320.webp",
+      "projects/site-baia-320.avif",
+      "projects/site-baia-640.webp",
+      "projects/site-baia-640.avif"
+    ]
+  },
+  "projects/site-pitangui-pedras.jpg": {
+    "h": "56fabe49615973dd70aa14f6e07e196874166926",
+    "out": [
+      "projects/site-pitangui-pedras.jpg",
+      "projects/site-pitangui-pedras-320.webp",
+      "projects/site-pitangui-pedras-320.avif",
+      "projects/site-pitangui-pedras-640.webp",
+      "projects/site-pitangui-pedras-640.avif"
+    ]
+  },
+  "projects/track-it.jpg": {
+    "h": "d52a93a2ab372a389e1010a4816494b1296e6a38",
+    "out": [
+      "projects/track-it.jpg",
+      "projects/track-it-320.webp",
+      "projects/track-it-320.avif",
+      "projects/track-it-640.webp",
+      "projects/track-it-640.avif"
+    ]
+  },
+  "projects/troca-de-cheque.jpg": {
+    "h": "12060cf852f53bc93778a020bfad75d37fb2eace",
+    "out": [
+      "projects/troca-de-cheque.jpg",
+      "projects/troca-de-cheque-320.webp",
+      "projects/troca-de-cheque-320.avif",
+      "projects/troca-de-cheque-640.webp",
+      "projects/troca-de-cheque-640.avif"
+    ]
+  }
+}

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Anti-flash do tema. Roda ANTES do primeiro paint, por isso e inline e
+         fica aqui em cima, na frente do CSS e do bundle.
+         O tema e por classe .dark no <html>, entao sem isto a pagina nasce
+         CLARA e quem usa tema escuro ve a pagina branca inteira antes de o
+         React montar. Com o conteudo pre-renderizado isso ficou muito mais
+         visivel: o que piscava era uma tela vazia, agora pisca a pagina toda.
+
+         ATENCAO AURORA: "devpedro-theme" e a mesma chave do storageKey em
+         src/components/theme-provider.tsx, e a regra tem que bater com a de
+         la (system = prefers-color-scheme). Mudou la, muda aqui. Script
+         inline nao consegue importar a constante. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("devpedro-theme") || "system";
+          var dark =
+            t === "dark" ||
+            (t === "system" &&
+              matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.classList.toggle("dark", dark);
+          document.documentElement.style.colorScheme = dark ? "dark" : "light";
+        } catch (e) {
+          /* localStorage bloqueado (aba anonima, cookies off): segue no claro. */
+        }
+      })();
+    </script>
+
+    <!-- ==================================================================
+         SITE_URL = https://pedrohbf1.github.io/
+         GitHub Pages como site de USUARIO (repo "pedrohbf1.github.io"):
+         servido na RAIZ do dominio. Por isso os caminhos absolutos que ja
+         existem (/projects, /logos, /pedro.jpg, /favicon.png, /og.png)
+         funcionam como estao e o vite.config.ts NAO precisa de `base`.
+
+         canonical, og:url e og:image sao ABSOLUTOS de proposito: WhatsApp e
+         LinkedIn nao resolvem caminho relativo ao montar o preview do link.
+
+         Mudou o nome do repo? Troque aqui, em public/robots.txt e em
+         scripts/seo-build.ts:   grep -rn "pedrohbf1.github.io"
+         ================================================================== -->
+    <link rel="canonical" href="https://pedrohbf1.github.io/" />
+
+    <title>Pedro Henrique — Desenvolvedor Full Stack React e Node</title>
+    <meta
+      name="description"
+      content="17 sistemas para 11 empresas: ERP, CRM, apps e sites, do banco ao deploy. Pedro Henrique, desenvolvedor full stack em Minas Gerais, React, Node e Postgres."
+    />
+    <meta name="author" content="Pedro Henrique" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+
+    <!-- Open Graph: e isto que WhatsApp, LinkedIn e Slack leem para montar o
+         cartao do link. og:image tem que ser URL ABSOLUTA. -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="devPedro" />
+    <meta property="og:url" content="https://pedrohbf1.github.io/" />
+    <meta
+      property="og:title"
+      content="Pedro Henrique — Desenvolvedor Full Stack React e Node"
+    />
+    <meta
+      property="og:description"
+      content="17 sistemas para 11 empresas, do banco ao deploy: ERP de mineração, CRM de loteamento, gestão de clínica, app na Play Store e catálogo com 3D no navegador. React, Node, TypeScript e PostgreSQL."
+    />
+    <meta property="og:image" content="https://pedrohbf1.github.io/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Pedro Henrique, desenvolvedor full stack. 21 projetos entregues, do banco ao deploy, com React, Node e PostgreSQL."
+    />
+    <meta property="profile:first_name" content="Pedro" />
+    <meta property="profile:last_name" content="Henrique" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Pedro Henrique — Desenvolvedor Full Stack React e Node"
+    />
+    <meta
+      name="twitter:description"
+      content="17 sistemas para 11 empresas, do banco ao deploy: ERP de mineração, CRM de loteamento, gestão de clínica, app na Play Store e catálogo com 3D no navegador. React, Node, TypeScript e PostgreSQL."
+    />
+    <meta name="twitter:image" content="https://pedrohbf1.github.io/og.png" />
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+    <!-- JSON-LD (Person, WebSite, ProfilePage, ItemList dos projetos) e
+         injetado aqui por scripts/seo-build.ts, gerado a partir de
+         src/data/projects.ts e src/data/profile.ts. Nao escreva a mao:
+         assim ele nunca fica desatualizado quando um projeto e adicionado. -->
+    <!--seo:jsonld-->
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+# Portfolio de Pedro Henrique — Desenvolvedor Full Stack
+# Pagina unica: tudo deve ser rastreado.
+User-agent: *
+Allow: /
+
+# SITE_URL: GitHub Pages na raiz. Se virar repo de projeto, troque aqui tambem.
+Sitemap: https://pedrohbf1.github.io/sitemap.xml
